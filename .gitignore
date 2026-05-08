@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Mock data ###
+src/main/resources/get/
+src/main/resources/other/
