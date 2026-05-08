@@ -3,6 +3,8 @@ package com.test.mockserver;
 import com.test.mockserver.initializers.YamlInitializer;
 import org.mockserver.mock.Expectation;
 import org.mockserver.server.initialize.ExpectationInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import java.util.Properties;
 
 public class ExpectationInitialization implements ExpectationInitializer {
 
+    private static final Logger log = LoggerFactory.getLogger(ExpectationInitialization.class);
     private static final String PROPERTIES_FILE = "application.properties";
     private static final String FOLDERS_KEY = "mockserver.yaml.folders";
     private static final String FOLDERS_DEFAULT = "get/,other/";
@@ -34,8 +37,8 @@ public class ExpectationInitialization implements ExpectationInitializer {
                 .toArray(Expectation[]::new);
 
         int total = initializers.stream().mapToInt(YamlInitializer::getLoadedCount).sum();
-        System.out.println("Loaded " + folders.size() + " folder(s): " + String.join(", ", folders));
-        System.out.println("Loaded " + total + " mock expectation(s) total");
+        log.info("Loaded {} folder(s): {}", folders.size(), String.join(", ", folders));
+        log.info("Loaded {} mock expectation(s) total", total);
 
         return all;
     }
@@ -47,7 +50,7 @@ public class ExpectationInitialization implements ExpectationInitializer {
                 props.load(is);
             }
         } catch (IOException e) {
-            System.err.println("Could not load " + PROPERTIES_FILE + ", using defaults");
+            log.error("Could not load {}, using defaults", PROPERTIES_FILE, e);
         }
         return props.getProperty(key, defaultValue);
     }

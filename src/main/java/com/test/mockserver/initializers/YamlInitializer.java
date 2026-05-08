@@ -14,6 +14,8 @@ import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.model.Parameter;
 import org.mockserver.server.initialize.ExpectationInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -27,6 +29,8 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 public class YamlInitializer implements ExpectationInitializer {
+
+    private static final Logger log = LoggerFactory.getLogger(YamlInitializer.class);
 
     private final String resourceFolder;
     @Getter
@@ -42,6 +46,7 @@ public class YamlInitializer implements ExpectationInitializer {
         try {
             List<String> resources = FileHelper.getResourceFiles(resourceFolder);
             for (String resource : resources) {
+                log.debug("Loading mock file: {}{}", resourceFolder, resource);
                 Yaml yaml = new Yaml(new Constructor(RequestAndResponse.class, new LoaderOptions()));
 
                 InputStream inputStream = getClass().getClassLoader()
@@ -109,23 +114,23 @@ public class YamlInitializer implements ExpectationInitializer {
 
     private boolean isValid(RequestAndResponse rpObj, String filename) {
         if (rpObj.getRequest() == null) {
-            System.err.printf("[WARN] Skipping invalid mock in %s%s — request is missing%n", resourceFolder, filename);
+            log.warn("Skipping invalid mock in {}{} — request is missing", resourceFolder, filename);
             return false;
         }
         if (rpObj.getRequest().getMethod() == null || rpObj.getRequest().getMethod().isBlank()) {
-            System.err.printf("[WARN] Skipping invalid mock in %s%s — request.method is required%n", resourceFolder, filename);
+            log.warn("Skipping invalid mock in {}{} — request.method is required", resourceFolder, filename);
             return false;
         }
         if (rpObj.getRequest().getPath() == null || rpObj.getRequest().getPath().isBlank()) {
-            System.err.printf("[WARN] Skipping invalid mock in %s%s — request.path is required%n", resourceFolder, filename);
+            log.warn("Skipping invalid mock in {}{} — request.path is required", resourceFolder, filename);
             return false;
         }
         if (rpObj.getResponse() == null) {
-            System.err.printf("[WARN] Skipping invalid mock in %s%s — response is missing%n", resourceFolder, filename);
+            log.warn("Skipping invalid mock in {}{} — response is missing", resourceFolder, filename);
             return false;
         }
         if (rpObj.getResponse().getStatusCode() == null) {
-            System.err.printf("[WARN] Skipping invalid mock in %s%s — response.statusCode is required%n", resourceFolder, filename);
+            log.warn("Skipping invalid mock in {}{} — response.statusCode is required", resourceFolder, filename);
             return false;
         }
         return true;

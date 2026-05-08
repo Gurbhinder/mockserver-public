@@ -3,6 +3,8 @@ package com.test.mockserver.watcher;
 import com.test.mockserver.initializers.YamlInitializer;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.mock.Expectation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,6 +16,8 @@ import java.util.List;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class HotReloadWatcher {
+
+    private static final Logger log = LoggerFactory.getLogger(HotReloadWatcher.class);
 
     private final ClientAndServer mockServer;
     private final List<String> folders;
@@ -46,9 +50,9 @@ public class HotReloadWatcher {
                 Path path = resolveResourcePath(folder);
                 if (path != null && Files.isDirectory(path)) {
                     path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
-                    System.out.println("[HotReload] Watching: " + path);
+                    log.info("Watching: {}", path);
                 } else {
-                    System.err.println("[HotReload] Could not watch folder (not found on filesystem): " + folder);
+                    log.warn("Could not watch folder (not found on filesystem): {}", folder);
                 }
             }
 
@@ -56,18 +60,17 @@ public class HotReloadWatcher {
                 WatchKey key = watchService.take();
                 boolean changed = key.pollEvents().stream()
                         .anyMatch(e -> e.kind() != OVERFLOW);
-
                 key.reset();
 
                 if (changed) {
-                    System.out.println("[HotReload] Change detected — reloading mock expectations...");
+                    log.info("Change detected — reloading mock expectations...");
                     reload();
                 }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (IOException e) {
-            System.err.println("[HotReload] Watcher error: " + e.getMessage());
+            log.error("Watcher error", e);
         }
     }
 
@@ -81,11 +84,10 @@ public class HotReloadWatcher {
             mockServer.reset();
             mockServer.upsert(all);
 
-            int total = all.length;
-            System.out.println("[HotReload] Reloaded " + total + " mock expectation(s) from "
-                    + folders.size() + " folder(s): " + String.join(", ", folders));
+            log.info("Reloaded {} mock expectation(s) from {} folder(s): {}",
+                    all.length, folders.size(), String.join(", ", folders));
         } catch (Exception e) {
-            System.err.println("[HotReload] Reload failed: " + e.getMessage());
+            log.error("Reload failed", e);
         }
     }
 
@@ -96,7 +98,7 @@ public class HotReloadWatcher {
                 return Paths.get(url.toURI());
             }
         } catch (URISyntaxException e) {
-            System.err.println("[HotReload] Could not resolve path for folder: " + folder);
+            log.error("Could not resolve path for folder: {}", folder, e);
         }
         return null;
     }
