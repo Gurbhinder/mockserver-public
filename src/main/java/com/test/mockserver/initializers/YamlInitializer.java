@@ -4,6 +4,7 @@ import com.test.mockserver.helper.ConvertInternalToMockObjects;
 import com.test.mockserver.helper.FileHelper;
 import com.test.mockserver.objects.ODelay;
 import com.test.mockserver.objects.RequestAndResponse;
+import lombok.Getter;
 import org.mockserver.matchers.TimeToLive;
 import org.mockserver.matchers.Times;
 import org.mockserver.mock.Expectation;
@@ -28,14 +29,11 @@ import static org.mockserver.model.HttpResponse.response;
 public class YamlInitializer implements ExpectationInitializer {
 
     private final String resourceFolder;
+    @Getter
     private int loadedCount = 0;
 
     public YamlInitializer(String resourceFolder) {
         this.resourceFolder = resourceFolder;
-    }
-
-    public int getLoadedCount() {
-        return loadedCount;
     }
 
     @Override
