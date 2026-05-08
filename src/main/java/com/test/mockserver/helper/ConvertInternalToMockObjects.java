@@ -6,7 +6,6 @@ import com.test.mockserver.objects.ORequestBody;
 import org.mockserver.matchers.MatchType;
 import org.mockserver.model.Body;
 import org.mockserver.model.Header;
-import org.mockserver.model.HttpMessage;
 import org.mockserver.model.Parameter;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import static org.mockserver.model.JsonBody.json;
 import static org.mockserver.model.JsonPathBody.jsonPath;
-import static org.mockserver.model.Parameter.param;
 import static org.mockserver.model.ParameterBody.params;
 import static org.mockserver.model.RegexBody.regex;
 import static org.mockserver.model.XPathBody.xpath;

@@ -21,7 +21,7 @@ public class ExpectationInitialization implements ExpectationInitializer {
 
     @Override
     public Expectation[] initializeExpectations() {
-        String foldersCsv = loadProperty(FOLDERS_KEY, FOLDERS_DEFAULT);
+        String foldersCsv = loadProperty();
 
         List<String> folders = Arrays.stream(foldersCsv.split(","))
                 .map(String::trim)
@@ -43,7 +43,7 @@ public class ExpectationInitialization implements ExpectationInitializer {
         return all;
     }
 
-    private String loadProperty(String key, String defaultValue) {
+    private String loadProperty() {
         Properties props = new Properties();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             if (is != null) {
@@ -52,6 +52,6 @@ public class ExpectationInitialization implements ExpectationInitializer {
         } catch (IOException e) {
             log.error("Could not load {}, using defaults", PROPERTIES_FILE, e);
         }
-        return props.getProperty(key, defaultValue);
+        return props.getProperty(ExpectationInitialization.FOLDERS_KEY, ExpectationInitialization.FOLDERS_DEFAULT);
     }
 }
