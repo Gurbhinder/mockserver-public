@@ -1,0 +1,63 @@
+---
+request:
+  method: "POST"
+  path: "/post-test"
+  requestBody:
+    type: "JSON"
+    matcher: |
+      {"id": 1}
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "JSON Exact Match"
+    }
+---
+request:
+  method: "POST"
+  path: "/post-test"
+  requestBody:
+    type: "JSON_PATH"
+    matcher: |
+      $.store.book[?(@.price < 10)]
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "one or more fields that match the JsonPath expression"
+    }
+---
+request:
+  method: "POST"
+  path: "/post-test"
+  headers:
+    - name: "Content-Type"
+      value: "application/x-www-form-urlencoded"
+  requestBody:
+    type: "PARAMETERS"
+    parameters:
+      - name: email
+        value: "joe.blogs@gmail.com"
+      - name: password
+        value: "secure_Password123"
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "Url Encoded match"
+    }

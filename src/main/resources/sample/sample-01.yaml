@@ -1,0 +1,90 @@
+---
+request:
+  method: "GET"
+  path: "/test/{param1}"
+  pathParameters:
+    - name: param1
+      value: 2
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "Path Parameters"
+    }
+---
+request:
+  method: "GET"
+  path: "/test"
+  headers:
+    - name: "Manual"
+      value: "TEST"
+  queryParameters:
+    - name: "query"
+      value: "param1"
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "Query Param with header"
+    }
+---
+request:
+  method: "GET"
+  path: "/test"
+  headers:
+    - name: "Manual"
+      value: "TEST"
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "Only with header"
+    }
+---
+request:
+  method: "GET"
+  path: "/test"
+  queryParameters:
+    - name: "query"
+      value: "param1"
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "This request is with query parameter"
+    }
+---
+request:
+  method: "GET"
+  path: "/test"
+response:
+  statusCode: 200
+  headers:
+    - name: "Content-Type"
+      value: "application/json"
+    - name: "Manual"
+      value: "TEST"
+  body: |
+    {
+      "message" : "With no query param or header"
+    }
